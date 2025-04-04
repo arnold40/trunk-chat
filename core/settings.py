@@ -16,6 +16,12 @@ import os
 
 load_dotenv()
 
+print("RDS_DB_NAME:", os.getenv('RDS_DB_NAME'))
+print("RDS_USERNAME:", os.getenv('RDS_USERNAME'))
+print("RDS_PASSWORD:", os.getenv('RDS_PASSWORD'))
+print("RDS_HOSTNAME:", os.getenv('RDS_HOSTNAME'))
+print("RDS_PORT:", os.getenv('RDS_PORT'))
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
