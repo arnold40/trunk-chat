@@ -6,6 +6,9 @@ class UserFavFood(models.Model):
     fav_foods = ArrayField(models.CharField(max_length=100), blank=True, default=list)
     is_vegetarian = models.BooleanField(default=False)
 
+    class Meta:
+        db_table = 'api_userfavfood'  # Explicitly set the table name
+
     def save(self, *args, **kwargs):
         vegetarian_foods = {"tofu", "salad", "vegetable", "fruit", "beans", "lentils", "chickpeas", "quinoa", "tempeh", "nuts", "seeds", "mango", "ice cream", "chocolate cake"}
         non_veg_foods = {"chicken", "beef", "pork", "fish", "shrimp", "bacon", "ham", "lamb", "turkey", "steak"}
