@@ -98,11 +98,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',        # Database name
-        'USER': 'postgres',       # Database user
+        'NAME': os.getenv('RDS_DB_NAME'),        # Database name
+        'USER': os.getenv('RDS_USERNAME'),       # Database user
         'PASSWORD': 'trunk-chat',   # Database password
         'HOST': 'awseb-e-6rhv4q76ft-stack-awsebrdsdatabase-hhoumyfp0eqz.cfmus2wai35k.eu-west-1.rds.amazonaws.com',       # Database host
-        'PORT': 5432,   # Database port (default 5432)
+        'PORT': os.getenv('RDS_PORT'),   # Database port
     }
 }
 
