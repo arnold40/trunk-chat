@@ -1,6 +1,6 @@
 from django.urls import path
-from . import views
+from .views import UserViewSet
 
 urlpatterns = [
-    path('vegetarian/', views.vegetarian_users),
+    path('users/', UserViewSet.as_view(), name='users'),
 ]
