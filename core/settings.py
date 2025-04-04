@@ -84,25 +84,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('RDS_DB_NAME'),        # Database name
-#         'USER': os.getenv('RDS_USERNAME'),       # Database user
-#         'PASSWORD': os.getenv('RDS_PASSWORD'),   # Database password
-#         'HOST': os.getenv('RDS_HOSTNAME'),       # Database host
-#         'PORT': os.getenv('RDS_PORT', '5432'),   # Database port (default 5432)
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('RDS_DB_NAME'),        # Database name
         'USER': os.getenv('RDS_USERNAME'),       # Database user
-        'PASSWORD': 'trunk-chat',   # Database password
-        'HOST': 'awseb-e-6rhv4q76ft-stack-awsebrdsdatabase-hhoumyfp0eqz.cfmus2wai35k.eu-west-1.rds.amazonaws.com',       # Database host
-        'PORT': os.getenv('RDS_PORT'),   # Database port
+        'PASSWORD': os.getenv('RDS_PASSWORD'),   # Database password
+        'HOST': os.getenv('RDS_HOSTNAME'),       # Database host
+        'PORT': os.getenv('RDS_PORT', '5432'),   # Database port (default 5432)
     }
 }
 
