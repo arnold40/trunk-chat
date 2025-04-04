@@ -15,6 +15,13 @@ ADD . /app/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+# Add the entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Set the entrypoint to the script
+ENTRYPOINT ["/entrypoint.sh"]
+
 # Expose the port server is running on
 EXPOSE 8000
 
