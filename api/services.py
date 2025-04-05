@@ -53,8 +53,8 @@ class FoodSimulationService:
         """Generates a simulated favorite food list from AI interaction."""
 
         # First AI asks the question
-        asker_prompt = "You are ChatGPT A. Ask the other AI for their top 3 favorite foods."
-        asker_content = "What are your top 3 favorite foods?"
+        asker_prompt = "You are ChatGPT A. Your only task is to ask a question. Do not answer. Ask: What are your top 3 favorite foods?"
+        asker_content = ""
         question = self.gpt_asker.ask_question(asker_prompt, asker_content)
 
         if not question:
