@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from .models import UserFavFood
 from .services import FoodSimulationService
@@ -13,6 +14,7 @@ from .serializers import UserFavFoodSerializer
 logger = logging.getLogger(__name__)
 
 class UserViewSet(APIView):
+    permission_classes = [IsAuthenticated]
     """API View for managing and simulating user favorite foods."""
 
     def get(self, request):
