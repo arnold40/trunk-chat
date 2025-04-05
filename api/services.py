@@ -4,7 +4,7 @@ import uuid
 import logging
 from dotenv import load_dotenv
 from openai import OpenAI
-from .models import UserFavFood
+from .models import User, UserFavFood
 
 # Load environment variables
 load_dotenv()
@@ -64,7 +64,7 @@ class FoodSimulationService:
         logger.info(f"Generated question: {question}")
 
         # Second AI responds dynamically with three random foods
-        responder_prompt = "You are ChatGPT B. Respond with three random food items."
+        responder_prompt = "You are ChatGPT B. Respond with three random food items. Also indicate if they are vegetarian or not."
         json_format = {
             "format": {
                 "type": "json_schema",
@@ -74,7 +74,19 @@ class FoodSimulationService:
                     "properties": {
                         "foods": {
                             "type": "array",
-                            "items": {"type": "string"}
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "is_veggie": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "additionalProperties": False,
+                                "required": ["name", "is_veggie"]
+                            }
                         }
                     },
                     "required": ["foods"],
@@ -109,9 +121,17 @@ class FoodSimulationService:
         user_name = f"User {user_id}"
 
         try:
-            user_fav_food = UserFavFood.objects.create(name=user_name, fav_foods=favorite_foods)
+            user = User.objects.create(name=user_name, is_vegetarian=False)
+            for food in favorite_foods:
+                UserFavFood.objects.create(
+                    user=user,
+                    food_name=food["name"],
+                    is_veggie=food["is_veggie"]
+                )
+
             logger.info(f"Created user {user_name} with favorite foods: {favorite_foods}")
-            return user_fav_food
+            return user
+
         except Exception as e:
-            logger.error(f"Failed to create UserFavFood entry: {e}")
+            logger.error(f"Failed to create User and their favorite foods: {e}")
             return None

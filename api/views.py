@@ -6,9 +6,9 @@ from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from .models import UserFavFood
+from .models import User
 from .services import FoodSimulationService
-from .serializers import UserFavFoodSerializer
+from .serializers import UserSerializer
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -20,8 +20,8 @@ class UserViewSet(APIView):
     def get(self, request):
         """Fetches all vegetarian user favorite foods."""
         try:
-            users_fav_food = UserFavFood.objects.filter(is_vegetarian=True)
-            serializer = UserFavFoodSerializer(users_fav_food, many=True)
+            users = User.objects.filter(is_vegetarian=True).prefetch_related('fav_foods')
+            serializer = UserSerializer(users, many=True)
             logger.info(f"Fetched {len(serializer.data)} vegetarian user favorite food records.")
             return JsonResponse({"response": serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -32,14 +32,14 @@ class UserViewSet(APIView):
         """Simulates favorite food for a user and returns one user's response."""
         try:
             food_simulation_service = FoodSimulationService()
-            user_fav_food = food_simulation_service.simulate_user_fav_food()
+            user = food_simulation_service.simulate_user_fav_food()
 
-            if not user_fav_food:
+            if not user:
                 return JsonResponse({"error": "Failed to generate favorite food data."},
                                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            serializer = UserFavFoodSerializer(user_fav_food)
-            logger.info(f"Successfully created favorite food entry: {serializer.data}")
+            serializer = UserSerializer(user)
+            logger.info(f"Successfully created user with favorite food entry: {serializer.data}")
             return JsonResponse({"response": serializer.data}, status=status.HTTP_201_CREATED)
 
         except ValidationError as e:
@@ -53,6 +53,6 @@ class UserViewSet(APIView):
 
     def delete(self, request):
         """Deletes all user favorite food records."""
-        UserFavFood.objects.all().delete()
+        User.objects.all().delete()
         logger.info("All user favorite food records deleted.")
         return JsonResponse({"message": "Database cleaned successfully."}, status=status.HTTP_200_OK)
