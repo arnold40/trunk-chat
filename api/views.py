@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from concurrent.futures import ThreadPoolExecutor
 
 from .models import User
 from .services import FoodSimulationService
@@ -59,6 +60,36 @@ class UserViewSet(APIView):
             logger.error(f"Unexpected error in food simulation: {e}\n{traceback.format_exc()}")
             return JsonResponse({"error": "Internal Server Error", "details": str(e)},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def put(self, request):
+        """Creates 100 users with simulated favorite food data concurrently."""
+        try:
+            food_simulation_service = FoodSimulationService()
+
+            def create_user(_):
+                user = food_simulation_service.simulate_user_fav_food()
+                if user:
+                    return UserSerializer(user).data
+                else:
+                    return None
+
+            with ThreadPoolExecutor(max_workers=10) as executor:
+                results = list(executor.map(create_user, range(100)))
+
+            # Filter out any None results (in case simulation failed for some users)
+            successful_results = [result for result in results if result]
+
+            if not successful_results:
+                return JsonResponse({"error": "Failed to generate any favorite food data."},
+                                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            logger.info(f"Successfully created {len(successful_results)} users with favorite food data.")
+            return JsonResponse({"response": successful_results}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            logger.error(f"Unexpected error in bulk user creation: {e}\n{traceback.format_exc()}")
+            return JsonResponse({"error": "Internal Server Error", "details": str(e)},
+                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def delete(self, request):
         """Deletes all user favorite food records."""
