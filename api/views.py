@@ -1,5 +1,6 @@
 import traceback
 import logging
+import os
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
@@ -18,13 +19,21 @@ class UserViewSet(APIView):
     """API View for managing and simulating user favorite foods."""
 
     def get(self, request):
+        print("ENV: " + str(os.getenv("ENV")))
         """Fetches all vegetarian user favorite foods."""
         try:
             users = User.objects.filter(is_vegetarian=True).prefetch_related('fav_foods')
+            if not users.exists():
+                total_records = User.objects.count()
+                logger.info("No vegetarian user records found.")
+                return JsonResponse({"message": f"No vegetarian user found in {total_records} records."},
+                                    status=status.HTTP_404_NOT_FOUND)
+
             serializer = UserSerializer(users, many=True)
-            logger.info(f"Fetched {len(serializer.data)} vegetarian user favorite food records.")
+            logger.info(f"Fetched {len(serializer.data)} vegetarian user records.")
             return JsonResponse({"response": serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
+            logger.error(f"Error fetching vegetarian users: {e}")
             return JsonResponse({"error": "Failed to fetch data", "details": str(e)},
                                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
