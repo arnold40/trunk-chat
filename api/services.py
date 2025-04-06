@@ -10,7 +10,6 @@ from .models import User, UserFavFood
 load_dotenv()
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -19,9 +18,6 @@ class GPTClient:
 
     def __init__(self):
         api_key = os.getenv('OPENAI_API_KEY')
-        if not api_key:
-            raise ValueError("OPENAI_API_KEY is missing. Please set it in your environment variables.")
-
         self.client = OpenAI(api_key=api_key)
 
     def ask_question(self, system_prompt, user_content, response_format=None):
