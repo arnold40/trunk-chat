@@ -29,7 +29,6 @@ class GPTClient:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_content}
                 ],
-                temperature=2.0,
                 text=response_format
             )
             return response.output_text
@@ -61,7 +60,7 @@ class FoodSimulationService:
         logger.info(f"Generated question: {question}")
 
         # Second AI responds dynamically with three random foods
-        responder_prompt = "You are ChatGPT B. Respond with three random food items. The selection should be independent and truly random — it is okay if all three are vegetarian or non-vegetarian."
+        responder_prompt = "You are ChatGPT B. In real world percent chances randomly respond with three vegetarian or non-vegetarian food items."
         json_format = {
             "format": {
                 "type": "json_schema",
