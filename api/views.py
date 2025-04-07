@@ -74,7 +74,7 @@ class UserViewSet(APIView):
                     return None
 
             with ThreadPoolExecutor(max_workers=10) as executor:
-                results = list(executor.map(create_user, range(10)))
+                results = list(executor.map(create_user, range(100)))
 
             # Filter out any None results (in case simulation failed for some users)
             successful_results = [result for result in results if result]
