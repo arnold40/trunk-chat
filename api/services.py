@@ -29,6 +29,7 @@ class GPTClient:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_content}
                 ],
+                temperature=2.0,
                 text=response_format
             )
             return response.output_text
@@ -60,7 +61,7 @@ class FoodSimulationService:
         logger.info(f"Generated question: {question}")
 
         # Second AI responds dynamically with three random foods
-        responder_prompt = "You are ChatGPT B. Respond with three random food items. Also indicate if they are vegetarian or not."
+        responder_prompt = "You are ChatGPT B. Respond with three random food items. The selection should be independent and truly random — it is okay if all three are vegetarian or non-vegetarian."
         json_format = {
             "format": {
                 "type": "json_schema",
@@ -91,6 +92,7 @@ class FoodSimulationService:
             }
         }
         response = self.gpt_responder.ask_question(responder_prompt, question, json_format)
+        print(response)
 
         if not response:
             logger.error("Failed to generate favorite foods response.")
